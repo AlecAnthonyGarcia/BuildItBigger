@@ -141,5 +141,6 @@
     <orderEntry type="library" exported="" name="play-services-nearby-7.3.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-7.3.0" level="project" />
+    <orderEntry type="module" module-name="libjavajokes" exported="" />
   </component>
 </module>
