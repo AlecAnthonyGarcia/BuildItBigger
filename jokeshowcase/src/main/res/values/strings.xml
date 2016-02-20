@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">JokeShowcase</string>
+    <string name="showcase_title">Here\'s a joke for you:</string>
+    <string name="showcase_error">Couldn\'t showcase joke :(</string>
+</resources>
