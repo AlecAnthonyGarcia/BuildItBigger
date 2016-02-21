@@ -1,22 +1,15 @@
 package com.udacity.gradle.builditbigger;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.calialec.builditbigger.backend.myApi.MyApi;
 import com.calialec.builditbigger.jokeshowcase.JokeShowcaseActivity;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
-import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -50,44 +43,11 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void tellJoke(View view) {
-        new JokeEndpointsAsyncTask().execute(this);
+    public void tellJoke(View view) throws ExecutionException, InterruptedException {
+        String joke = new JokeEndpointsAsyncTask().execute(this).get();
+        Intent intent = new Intent(this, JokeShowcaseActivity.class);
+        intent.putExtra("joke", joke);
+        startActivity(intent);
     }
 
-}
-
-class JokeEndpointsAsyncTask extends AsyncTask<Context, Void, String> {
-    private static MyApi myApiService = null;
-    private Context context;
-
-    @Override
-    protected String doInBackground(Context... params) {
-        if(myApiService == null) {  // Only do this once
-            MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
-                    new AndroidJsonFactory(), null)
-                    .setRootUrl("https://udacity-build-it-bigger-1227.appspot.com/_ah/api/")
-                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                        @Override
-                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                            abstractGoogleClientRequest.setDisableGZipContent(true);
-                        }
-                    });
-            myApiService = builder.build();
-        }
-
-        context = params[0];
-
-        try {
-            return myApiService.tellJoke().execute().getData();
-        } catch (IOException e) {
-            return e.getMessage();
-        }
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        Intent intent = new Intent(context, JokeShowcaseActivity.class);
-        intent.putExtra("joke", result);
-        context.startActivity(intent);
-    }
 }
